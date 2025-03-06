@@ -15,11 +15,16 @@ func main() {
 		fmt.Fprint(os.Stdout, "$ ")
 
 		command, err := bufio.NewReader(os.Stdin).ReadString('\n')
+		fmt.Printf("Before Trim: %s \n", command)
+
+		command = strings.TrimSpace(command)
+		fmt.Printf("After Trim: %s", command)
 
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
 			os.Exit(1)
 		}
+
 
 		switch command {
 		case "exit 0":
