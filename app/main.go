@@ -15,7 +15,6 @@ func main() {
 		fmt.Fprint(os.Stdout, "$ ")
 
 		command, err := bufio.NewReader(os.Stdin).ReadString('\n')
-		fmt.Printf("Command entered: %s", command)
 
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
