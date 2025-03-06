@@ -23,6 +23,7 @@ func main() {
 
 		switch command {
 		case "exit 0":
+			fmt.Println("Ending the program..")
 			os.Exit(0)
 		default:
 			fmt.Println(command[:len(command)-1] + ": command not found")
