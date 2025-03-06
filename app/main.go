@@ -16,10 +16,7 @@ func main() {
 		fmt.Fprint(os.Stdout, "$ ")
 
 		command, err := bufio.NewReader(os.Stdin).ReadString('\n')
-		fmt.Printf("Before Trim: %s \n", command)
-
-		command = strings.TrimSpace(command)
-		fmt.Printf("After Trim: %s", command)
+		fmt.Printf("Command entered: %s", command)
 
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
@@ -28,10 +25,11 @@ func main() {
 
 
 		switch command {
-		case "exit 0":
-			os.Exit(0)
-		default:
-			fmt.Println(command[:len(command)-1] + ": command not found")
+			case "exit 0":
+				fmt.Printf("Exiting programm..")
+				os.Exit(0)
+			default:
+				fmt.Println(command[:len(command)-1] + ": command not found")
 		}
 	}
 }
