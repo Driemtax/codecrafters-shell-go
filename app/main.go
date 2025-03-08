@@ -79,15 +79,13 @@ func checkCommands(commands [3]string, arg string) bool {
 func checkEnvs(cmd string) string {
 	var path string = ""
 
-	fmt.Println("PATH: " + os.Getenv("PATH"))
-
 	var paths []string = strings.Split(os.Getenv("PATH"), ":")
 
 	for _, dir := range paths {
 		found, err := findExecutable(dir, cmd)
 
 		if err != nil {
-			fmt.Println("Error: ", err)
+			//fmt.Println("Error: ", err)
 			continue // needed to continue instead of return if there is an error opening a single dir
 		}
 
