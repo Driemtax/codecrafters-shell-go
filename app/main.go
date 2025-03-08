@@ -21,13 +21,11 @@ func main() {
 			os.Exit(1)
 		}
 
-
 		switch command {
-			case "exit 0":
-				fmt.Printf("Exiting programm..")
-				os.Exit(0)
-			default:
-				fmt.Println(command[:len(command)-1] + ": command not found")
+		case "exit 0\n":
+			os.Exit(0)
+		default:
+			fmt.Println(command[:len(command)-1] + ": command not found")
 		}
 	}
 }
