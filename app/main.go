@@ -28,7 +28,8 @@ func main() {
 		case command == "exit 0":
 			os.Exit(0)
 		case strings.HasPrefix(command, "echo"):
-			fmt.Println(strings.TrimPrefix(command, "echo"))
+			var output string = strings.TrimPrefix(command, "echo ")
+			fmt.Println(output)
 		default:
 			fmt.Println(command + ": command not found")
 		}
