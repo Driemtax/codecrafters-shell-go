@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
+	"os/exec"
 	"strings"
 )
 
@@ -19,41 +19,63 @@ func main() {
 
 		fmt.Fprint(os.Stdout, "$ ")
 
-		command, err := bufio.NewReader(os.Stdin).ReadString('\n')
+		input, err := bufio.NewReader(os.Stdin).ReadString('\n')
 
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
 			os.Exit(1)
 		}
 
-		command = strings.TrimSpace(command)
+		command, args := formatInput(input)
+		// not happy with this because both get executed everytime
+		//var isShellCmd bool = checkCommands(commands, command)
+		var isEnvCmd bool = false
+		envPath, envErr := exec.LookPath(command)
+		if envErr == nil {
+			isEnvCmd = true
+		}
 
 		// Evaluate the given command and args
 		switch {
 		// Exit the shell
-		case command == "exit 0":
+		case command == "exit" && args == "0":
 			os.Exit(0)
 		// echo your input to the console
-		case strings.HasPrefix(command, "echo"):
-			var output string = strings.TrimPrefix(command, "echo ")
-			fmt.Println(output)
+		case command == "echo":
+			fmt.Println(args)
 		// type shows how the given command would be interpreted
-		case strings.HasPrefix(command, "type"):
-			var arg string = strings.TrimPrefix(command, "type ")
-			var envPath string = checkEnvs(arg)
-			if checkCommands(commands, arg) {
-				fmt.Println(arg + " is a shell builtin")
-			} else if envPath != "" {
-				fmt.Println(arg + " is " + envPath)
-			} else {
-				fmt.Println(arg + ": not found")
+		case command == "type":
+			envPath, envErr := exec.LookPath(args)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "Error in type:", envErr)
 			}
-		case command == "test":
-			checkEnvs(command)
+			if checkCommands(commands, args) {
+				fmt.Println(args + " is a shell builtin")
+			} else if envErr == nil {
+				fmt.Println(args + " is " + envPath)
+			} else {
+				fmt.Println(args + ": not found")
+			}
+		case isEnvCmd:
+			executeExternal(envPath, args)
 		default:
 			fmt.Println(command + ": command not found")
 		}
 	}
+}
+
+// Formats the input given to command and args
+func formatInput(input string) (string, string) {
+	input = strings.TrimSpace(input)
+	var newInput = strings.SplitN(input, " ", 2)
+	var command = newInput[0]
+	var args = ""
+	if len(newInput) > 1 {
+		args = newInput[1]
+	}
+
+	return command, args
+
 }
 
 // checks if a given command is a built in command in this shell
@@ -73,59 +95,15 @@ func checkCommands(commands [3]string, arg string) bool {
 	return found
 }
 
-// checks for the cmd in the PATH env
-// cmd is the command that was typed in
-// returns the path of the cmd if found, else just an empty string
-func checkEnvs(cmd string) string {
-	var path string = ""
+// Executes an external Programm, like e.g. git. The Programm has to be in your PATH Variable
+// path: The path to the executable you wish to run
+func executeExternal(path string, args string) {
+	var seperated = strings.Split(args, " ")
 
-	var paths []string = strings.Split(os.Getenv("PATH"), ":")
-
-	for _, dir := range paths {
-		found, err := findExecutable(dir, cmd)
-
-		if err != nil {
-			//fmt.Println("Error: ", err)
-			continue // needed to continue instead of return if there is an error opening a single dir
-		}
-
-		if found {
-			path = dir + "/" + cmd // not the cleanest way but i needed a string instance
-			return path
-		}
-
-	}
-
-	return path
-}
-
-// Finds an executable file in a given dir
-// path is the given directory
-// fileName is the executable you are looking for
-// returns if there was an executable found with the given fileName
-func findExecutable(path string, fileName string) (bool, error) {
-	// Read all entries in given directory
-	entries, err := os.ReadDir(path)
-
+	var cmd = exec.Command(path, seperated...)
+	var output, err = cmd.Output()
 	if err != nil {
-		return false, err
+		fmt.Print(err.Error())
 	}
-
-	for _, entry := range entries {
-		// check if is not a dir and file name is searched one
-		if !entry.IsDir() && entry.Name() == fileName {
-			info, err := os.Stat(filepath.Join(path, fileName))
-
-			if err != nil {
-				return false, err
-			}
-
-			// Check if file is an executable
-			if (info.Mode() & 0111) != 0 {
-				return true, nil
-			}
-		}
-	}
-
-	return false, nil
+	fmt.Print(string(output))
 }
