@@ -57,7 +57,7 @@ func main() {
 				fmt.Println(args + ": not found")
 			}
 		case isEnvCmd:
-			executeExternal(envPath, args)
+			executeExternal(envPath, command, args)
 		default:
 			fmt.Println(command + ": command not found")
 		}
@@ -97,10 +97,12 @@ func checkCommands(commands [3]string, arg string) bool {
 
 // Executes an external Programm, like e.g. git. The Programm has to be in your PATH Variable
 // path: The path to the executable you wish to run
-func executeExternal(path string, args string) {
+func executeExternal(path string, command string, args string) {
 	var seperated = strings.Split(args, " ")
+	//fmt.Println("Args: ", seperated)
 
-	var cmd = exec.Command(path, seperated...)
+	var cmd = exec.Command(command, seperated...)
+	//fmt.Println("Cmd: ", cmd)
 	var output, err = cmd.Output()
 	if err != nil {
 		fmt.Print(err.Error())
