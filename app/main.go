@@ -15,7 +15,7 @@ func main() {
 
 	for {
 		// Commands currently bultin
-		commands := [3]string{"echo", "exit", "type"}
+		commands := [4]string{"echo", "exit", "type", "pwd"}
 
 		fmt.Fprint(os.Stdout, "$ ")
 
@@ -83,7 +83,7 @@ func formatInput(input string) (string, string) {
 // commands is the array of builtin commands
 // arg is the given command
 // returns a bool if the command is builtin or not
-func checkCommands(commands [3]string, arg string) bool {
+func checkCommands(commands [4]string, arg string) bool {
 	found := false
 
 	for _, cmd := range commands {
