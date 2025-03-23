@@ -27,12 +27,11 @@ func main() {
 		}
 
 		command, args := formatInput(input)
-		// not happy with this because both get executed everytime
-		//var isShellCmd bool = checkCommands(commands, command)
-		var isEnvCmd bool = false
-		envPath, envErr := exec.LookPath(command)
+
+		_, envErr := exec.LookPath(command)
+		var isEnvCommand = false
 		if envErr == nil {
-			isEnvCmd = true
+			isEnvCommand = true
 		}
 
 		// Evaluate the given command and args
@@ -56,8 +55,10 @@ func main() {
 			} else {
 				fmt.Println(args + ": not found")
 			}
-		case isEnvCmd:
-			executeExternal(envPath, command, args)
+		case command == "pwd" && args == "":
+			pwd()
+		case isEnvCommand:
+			executeExternal(command, args)
 		default:
 			fmt.Println(command + ": command not found")
 		}
@@ -97,15 +98,29 @@ func checkCommands(commands [3]string, arg string) bool {
 
 // Executes an external Programm, like e.g. git. The Programm has to be in your PATH Variable
 // path: The path to the executable you wish to run
-func executeExternal(path string, command string, args string) {
+func executeExternal(command string, args string) {
 	var seperated = strings.Split(args, " ")
-	//fmt.Println("Args: ", seperated)
 
 	var cmd = exec.Command(command, seperated...)
-	//fmt.Println("Cmd: ", cmd)
+
+	if len(seperated) == 0 {
+		cmd = exec.Command(command)
+	}
+
 	var output, err = cmd.Output()
 	if err != nil {
 		fmt.Print(err.Error())
 	}
 	fmt.Print(string(output))
+}
+
+// Prints the current working directory
+func pwd() {
+	var dir, err = os.Getwd()
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(dir)
+	}
 }
