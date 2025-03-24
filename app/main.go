@@ -99,6 +99,7 @@ func executeEcho(args []string) {
 	for _, arg := range args {
 		fmt.Print(arg, " ")
 	}
+	fmt.Print("\n")
 }
 
 // type shows how the given command would be interpreted
