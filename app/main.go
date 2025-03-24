@@ -67,7 +67,7 @@ func formatInput(input string) (string, []string) {
 	var command string
 	var args []string
 
-	re := regexp.MustCompile(`"[^"]*"|[^\s]+`)
+	re := regexp.MustCompile(`"[^"]*"|'[^']*'|[^\s]+`)
 	matches := re.FindAllString(input, -1)
 
 	command = matches[0]
@@ -97,6 +97,8 @@ func checkCommands(commands []string, arg string) bool {
 // echo your input to the console
 func executeEcho(args []string) {
 	for _, arg := range args {
+		arg = strings.TrimPrefix(arg, "'")
+		arg = strings.TrimSuffix(arg, "'")
 		fmt.Print(arg, " ")
 	}
 	fmt.Print("\n")
