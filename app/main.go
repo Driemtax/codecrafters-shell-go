@@ -146,6 +146,7 @@ func pwd() {
 	}
 }
 
+// Changes the working directory with an absolute or relative path
 func changeDirectory(path string) error {
 	err := os.Chdir(path)
 
