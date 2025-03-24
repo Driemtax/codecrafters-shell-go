@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 )
 
@@ -27,6 +28,8 @@ func main() {
 		}
 
 		command, args := formatInput(input)
+		// fmt.Println("Command:", command)
+		// fmt.Println("Args:", args, "Count:", len(args))
 
 		_, envErr := exec.LookPath(command)
 		var isEnvCommand = false
@@ -37,28 +40,16 @@ func main() {
 		// Evaluate the given command and args
 		switch {
 		// Exit the shell
-		case command == "exit" && args == "0":
+		case command == "exit":
 			os.Exit(0)
-		// echo your input to the console
 		case command == "echo":
-			fmt.Println(args)
-		// type shows how the given command would be interpreted
+			executeEcho(args)
 		case command == "type":
-			envPath, envErr := exec.LookPath(args)
-			if err != nil {
-				fmt.Fprintln(os.Stderr, "Error in type:", envErr)
-			}
-			if checkCommands(commands, args) {
-				fmt.Println(args + " is a shell builtin")
-			} else if envErr == nil {
-				fmt.Println(args + " is " + envPath)
-			} else {
-				fmt.Println(args + ": not found")
-			}
-		case command == "pwd" && args == "":
+			executeType(commands, args)
+		case command == "pwd" && len(args) == 0:
 			pwd()
 		case command == "cd":
-			err := changeDirectory(args)
+			err := changeDirectory(args[0])
 			if err != nil {
 				fmt.Printf("%s: %s: No such file or directory\n", command, args)
 			}
@@ -71,14 +62,16 @@ func main() {
 }
 
 // Formats the input given to command and args
-func formatInput(input string) (string, string) {
+func formatInput(input string) (string, []string) {
 	input = strings.TrimSpace(input)
-	var newInput = strings.SplitN(input, " ", 2)
-	var command = newInput[0]
-	var args = ""
-	if len(newInput) > 1 {
-		args = newInput[1]
-	}
+	var command string
+	var args []string
+
+	re := regexp.MustCompile(`"[^"]*"|[^\s]+`)
+	matches := re.FindAllString(input, -1)
+
+	command = matches[0]
+	args = matches[1:]
 
 	return command, args
 
@@ -101,20 +94,43 @@ func checkCommands(commands []string, arg string) bool {
 	return found
 }
 
+// echo your input to the console
+func executeEcho(args []string) {
+	for _, arg := range args {
+		fmt.Print(arg, " ")
+	}
+}
+
+// type shows how the given command would be interpreted
+func executeType(commands []string, args []string) {
+	envPath, envErr := exec.LookPath(args[0])
+	if envErr != nil {
+		fmt.Fprintln(os.Stderr, "Error in type:", envErr)
+	}
+	if checkCommands(commands, args[0]) {
+		fmt.Println(args[0] + " is a shell builtin")
+	} else if envErr == nil {
+		fmt.Println(args[0] + " is " + envPath)
+	} else {
+		fmt.Println(args[0] + ": not found")
+	}
+}
+
 // Executes an external Programm, like e.g. git. The Programm has to be in your PATH Variable
 // path: The path to the executable you wish to run
-func executeExternal(command string, args string) {
-	var seperated = strings.Split(args, " ")
+func executeExternal(command string, args []string) {
+	var cmd *exec.Cmd
 
-	var cmd = exec.Command(command, seperated...)
-
-	if len(seperated) == 0 {
+	if len(args) < 1 {
 		cmd = exec.Command(command)
+	} else {
+		cmd = exec.Command(command, args...)
 	}
 
 	var output, err = cmd.Output()
 	if err != nil {
 		fmt.Print(err.Error())
+		return
 	}
 	fmt.Print(string(output))
 }
