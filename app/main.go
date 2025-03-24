@@ -67,10 +67,10 @@ func formatInput(input string) (string, []string) {
 	var command string
 	var args []string
 
-	re := regexp.MustCompile(`"[^"]*"|'[^']*'|[^\s]+`)
+	re := regexp.MustCompile(`"[^"]*"|'[^']*'|[^\s]+`) // (\s+|[^\s]+)
 	matches := re.FindAllString(input, -1)
 
-	command = matches[0]
+	command = strings.TrimSpace(matches[0])
 	args = matches[1:]
 
 	return command, args
@@ -97,9 +97,14 @@ func checkCommands(commands []string, arg string) bool {
 // echo your input to the console
 func executeEcho(args []string) {
 	for _, arg := range args {
-		arg = strings.TrimPrefix(arg, "'")
-		arg = strings.TrimSuffix(arg, "'")
-		fmt.Print(arg, " ")
+		// Codecrafters wanted no Whitespace between to args in Single Quotes
+		if strings.HasPrefix(arg, "'") {
+			strings.TrimPrefix(arg, "'")
+			strings.TrimPrefix(arg, "'")
+			fmt.Print(arg)
+		} else {
+			fmt.Print(arg, " ")
+		}
 	}
 	fmt.Print("\n")
 }
