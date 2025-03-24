@@ -60,7 +60,7 @@ func main() {
 		case command == "cd":
 			err := changeDirectory(args)
 			if err != nil {
-				fmt.Println(command, ": ", args, ": No such file or directory")
+				fmt.Printf("%s: %s: No such file or directory\n", command, args)
 			}
 		case isEnvCommand:
 			executeExternal(command, args)
