@@ -144,8 +144,11 @@ func pwd() {
 	}
 }
 
-// Changes the working directory with an absolute or relative path
+// Changes the working directory with an absolute, relative Path and Home directory (using ~)
 func changeDirectory(path string) error {
+	if strings.HasPrefix(path, "~") {
+		path, _ = os.UserHomeDir()
+	}
 	err := os.Chdir(path)
 
 	return err
