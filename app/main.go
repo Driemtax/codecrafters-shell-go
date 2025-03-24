@@ -99,8 +99,8 @@ func executeEcho(args []string) {
 	for _, arg := range args {
 		// Codecrafters wanted no Whitespace between to args in Single Quotes
 		if strings.HasPrefix(arg, "'") {
-			strings.TrimPrefix(arg, "'")
-			strings.TrimPrefix(arg, "'")
+			arg = strings.TrimPrefix(arg, "'")
+			arg = strings.TrimSuffix(arg, "'")
 			fmt.Print(arg)
 		} else {
 			fmt.Print(arg, " ")
