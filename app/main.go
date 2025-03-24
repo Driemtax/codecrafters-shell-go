@@ -15,7 +15,7 @@ func main() {
 
 	for {
 		// Commands currently bultin
-		commands := [4]string{"echo", "exit", "type", "pwd"}
+		commands := []string{"echo", "exit", "type", "pwd", "cd"}
 
 		fmt.Fprint(os.Stdout, "$ ")
 
@@ -57,6 +57,11 @@ func main() {
 			}
 		case command == "pwd" && args == "":
 			pwd()
+		case command == "cd":
+			err := changeDirectory(args)
+			if err != nil {
+				fmt.Println(command, ": ", args, ": No such file or directory")
+			}
 		case isEnvCommand:
 			executeExternal(command, args)
 		default:
@@ -83,7 +88,7 @@ func formatInput(input string) (string, string) {
 // commands is the array of builtin commands
 // arg is the given command
 // returns a bool if the command is builtin or not
-func checkCommands(commands [4]string, arg string) bool {
+func checkCommands(commands []string, arg string) bool {
 	found := false
 
 	for _, cmd := range commands {
@@ -114,7 +119,7 @@ func executeExternal(command string, args string) {
 	fmt.Print(string(output))
 }
 
-// Prints the current working directory
+// Prints the current working directory as an absolute path
 func pwd() {
 	var dir, err = os.Getwd()
 
@@ -123,4 +128,10 @@ func pwd() {
 	} else {
 		fmt.Println(dir)
 	}
+}
+
+func changeDirectory(path string) error {
+	err := os.Chdir(path)
+
+	return err
 }
