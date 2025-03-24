@@ -104,9 +104,6 @@ func executeEcho(args []string) {
 // type shows how the given command would be interpreted
 func executeType(commands []string, args []string) {
 	envPath, envErr := exec.LookPath(args[0])
-	if envErr != nil {
-		fmt.Fprintln(os.Stderr, "Error in type:", envErr)
-	}
 	if checkCommands(commands, args[0]) {
 		fmt.Println(args[0] + " is a shell builtin")
 	} else if envErr == nil {
