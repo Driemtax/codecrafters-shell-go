@@ -27,6 +27,8 @@ func main() {
 			os.Exit(1)
 		}
 
+		//input := "echo example     shell'This is a    test'"
+
 		command, args := formatInput(input)
 		// fmt.Println("Command:", command)
 		// fmt.Println("Args:", args, "Count:", len(args))
@@ -71,10 +73,19 @@ func formatInput(input string) (string, []string) {
 	// 1. Everything between ""
 	// 2. Everything between ''
 	// 3. Everything that is not a space
-	// 4. A single space
-	re := regexp.MustCompile(`"[^"]*"|'[^']*'|[^\s]+|\s`)
+	// 4. Multiple, but at least one, spaces
+	re := regexp.MustCompile(`"[^"]*"|'[^']*'|([^\s'])+|(?:\s)*`) //[^\s]+|\s
 	matches := re.FindAllString(input, -1)
 
+	// Replacing all multiple occasions of spaces with a single space
+	for i, match := range matches {
+		if !(strings.HasPrefix(match, "'") || strings.HasPrefix(match, "\"")) {
+			re := regexp.MustCompile(`\s+`)
+			matches[i] = re.ReplaceAllString(match, " ")
+		}
+	}
+
+	// Extracting command and possible args
 	command = strings.TrimSpace(matches[0])
 	if len(matches) > 1 {
 		args = matches[2:] // At index 1 is always the space between the command and the args
