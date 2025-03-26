@@ -28,7 +28,7 @@ func main() {
 		}
 
 		// The next line is only for debugging
-		//input := "echo world\\ \\ \\ \\ \\ \\ script"
+		//input := "echo \\'\\\"world shell\\\"\\'"
 
 		command, args := formatInput(input)
 
@@ -74,16 +74,15 @@ func formatInput(input string) (string, []string) {
 	// 3. Everythin escaped by an \ (must be outside of cases 1 & 2)
 	// 4. Everything that is not a space (e.g. words, numbers)
 	// 5. Multiple, but at least one, spaces
-	re := regexp.MustCompile(`"[^"]*"|'[^']*'|\[^\s]*|([^\s'"\\])+|(?:\s)*`)
+	re := regexp.MustCompile(`"[^"]*"|'[^']*'|\\['"]|([^\s'"\\])+|(?:\s)*`)
 	matches := re.FindAllString(input, -1)
 
-	// Replacing all multiple occasions of spaces with a single space and remove Prefix of \
+	// Replacing all multiple occasions of spaces with a single space
 	for i, match := range matches {
 		if !(strings.HasPrefix(match, "'") || strings.HasPrefix(match, "\"")) {
 			re := regexp.MustCompile(`\s+`)
 			matches[i] = re.ReplaceAllString(match, " ")
 		}
-		//matches[i] = strings.TrimPrefix(match, "\\")
 	}
 
 	// Extracting command and possible args
@@ -91,7 +90,7 @@ func formatInput(input string) (string, []string) {
 	if len(matches) > 1 {
 		args = matches[2:] // At index 1 is always the space between the command and the args
 	}
-	// remove the leading and closing single and double quotes in the args
+	// remove the leading and closing single, double quotes and leading \ in the args
 	for i, arg := range args {
 		if strings.HasPrefix(arg, "'") {
 			arg = strings.TrimPrefix(arg, "'")
@@ -100,6 +99,7 @@ func formatInput(input string) (string, []string) {
 			arg = strings.TrimPrefix(arg, "\"")
 			args[i] = strings.TrimSuffix(arg, "\"")
 		}
+		args[i] = strings.TrimPrefix(arg, "\\")
 	}
 
 	return command, args
