@@ -172,7 +172,7 @@ func executeExternal(command string, args []string) {
 		fmt.Print(err)
 		return
 	}
-	fmt.Print(string(output), "\n")
+	fmt.Print(string(output))
 }
 
 // Prints the current working directory as an absolute path
