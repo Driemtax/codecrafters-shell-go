@@ -28,7 +28,7 @@ func main() {
 		}
 
 		// The next line is only for debugging
-		//input := "cat '/tmp/bar/f   70'"
+		//input := "cat '/tmp/bar/f   40' '/tmp/bar/f   45' '/tmp/bar/f   85'"
 
 		command, args := formatInput(input)
 		// fmt.Println("Command:", command)
@@ -144,12 +144,17 @@ func executeType(commands []string, args []string) {
 // Executes an external Programm, like e.g. git. The Programm has to be in your PATH Variable
 // path: The path to the executable you wish to run
 func executeExternal(command string, args []string) {
+	// Need to remove the args containing only a single space, because they would fuck up programs like cat
+	for i, arg := range args {
+		if arg == " " {
+			args = append(args[:i], args[i+1:]...)
+		}
+	}
 	// TODO: Think about if this needs to be done in every function, then abstract it to formatInput
 	for i, arg := range args {
 		if strings.HasPrefix(arg, "'") {
 			arg = strings.TrimPrefix(arg, "'")
 			args[i] = strings.TrimSuffix(arg, "'")
-			fmt.Print(args[i])
 		}
 	}
 	var cmd *exec.Cmd
