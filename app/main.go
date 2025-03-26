@@ -28,7 +28,7 @@ func main() {
 		}
 
 		// The next line is only for debugging
-		//input := "echo \\'\\\"world shell\\\"\\'"
+		//input := "cat \"/tmp/bar/f\\n47\" \"/tmp/bar/f\\16\" \"/tmp/bar/f'\\'49\""
 
 		command, args := formatInput(input)
 
@@ -77,6 +77,8 @@ func formatInput(input string) (string, []string) {
 	re := regexp.MustCompile(`"[^"]*"|'[^']*'|\\['"]|([^\s'"\\])+|(?:\s)*`)
 	matches := re.FindAllString(input, -1)
 
+	//fmt.Println("Matches:", matches)
+
 	// Replacing all multiple occasions of spaces with a single space
 	for i, match := range matches {
 		if !(strings.HasPrefix(match, "'") || strings.HasPrefix(match, "\"")) {
@@ -97,10 +99,13 @@ func formatInput(input string) (string, []string) {
 			args[i] = strings.TrimSuffix(arg, "'")
 		} else if strings.HasPrefix(arg, "\"") {
 			arg = strings.TrimPrefix(arg, "\"")
-			args[i] = strings.TrimSuffix(arg, "\"")
+			arg = strings.TrimSuffix(arg, "\"")
+			args[i] = arg
 		}
 		args[i] = strings.TrimPrefix(arg, "\\")
 	}
+
+	//fmt.Println("Args:", args)
 
 	return command, args
 
@@ -164,10 +169,10 @@ func executeExternal(command string, args []string) {
 
 	var output, err = cmd.Output()
 	if err != nil {
-		fmt.Print(err.Error())
+		fmt.Print(err)
 		return
 	}
-	fmt.Print(string(output))
+	fmt.Print(string(output), "\n")
 }
 
 // Prints the current working directory as an absolute path
