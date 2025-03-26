@@ -61,17 +61,24 @@ func main() {
 	}
 }
 
-// Formats the input given to command and args
+// Formats the input given to command and args. Extracts the command and args with a regex
 func formatInput(input string) (string, []string) {
 	input = strings.TrimSpace(input)
 	var command string
 	var args []string
 
-	re := regexp.MustCompile(`"[^"]*"|'[^']*'|[^\s]+`) // (\s+|[^\s]+)
+	// This regex matches the following criteria:
+	// 1. Everything between ""
+	// 2. Everything between ''
+	// 3. Everything that is not a space
+	// 4. A single space
+	re := regexp.MustCompile(`"[^"]*"|'[^']*'|[^\s]+|\s`)
 	matches := re.FindAllString(input, -1)
 
 	command = strings.TrimSpace(matches[0])
-	args = matches[1:]
+	if len(matches) > 1 {
+		args = matches[2:] // At index 1 is always the space between the command and the args
+	}
 
 	return command, args
 
@@ -95,6 +102,7 @@ func checkCommands(commands []string, arg string) bool {
 }
 
 // echo your input to the console
+// Something still doesnt work right. Whitespace between to single quoted words should be printed if in input
 func executeEcho(args []string) {
 	for _, arg := range args {
 		// Codecrafters wanted no Whitespace between to args in Single Quotes
@@ -103,7 +111,7 @@ func executeEcho(args []string) {
 			arg = strings.TrimSuffix(arg, "'")
 			fmt.Print(arg)
 		} else {
-			fmt.Print(arg, " ")
+			fmt.Print(arg)
 		}
 	}
 	fmt.Print("\n")
