@@ -28,11 +28,9 @@ func main() {
 		}
 
 		// The next line is only for debugging
-		//input := "cat '/tmp/bar/f   40' '/tmp/bar/f   45' '/tmp/bar/f   85'"
+		//input := "echo world\\ \\ \\ \\ \\ \\ script"
 
 		command, args := formatInput(input)
-		// fmt.Println("Command:", command)
-		// fmt.Println("Args:", args, "Count:", len(args))
 
 		_, envErr := exec.LookPath(command)
 		var isEnvCommand = false
@@ -73,17 +71,19 @@ func formatInput(input string) (string, []string) {
 	// This regex matches the following criteria:
 	// 1. Everything between ""
 	// 2. Everything between ''
-	// 3. Everything that is not a space
-	// 4. Multiple, but at least one, spaces
-	re := regexp.MustCompile(`"[^"]*"|'[^']*'|([^\s'"])+|(?:\s)*`) //[^\s]+|\s
+	// 3. Everythin escaped by an \ (must be outside of cases 1 & 2)
+	// 4. Everything that is not a space (e.g. words, numbers)
+	// 5. Multiple, but at least one, spaces
+	re := regexp.MustCompile(`"[^"]*"|'[^']*'|\[^\s]*|([^\s'"\\])+|(?:\s)*`)
 	matches := re.FindAllString(input, -1)
 
-	// Replacing all multiple occasions of spaces with a single space
+	// Replacing all multiple occasions of spaces with a single space and remove Prefix of \
 	for i, match := range matches {
 		if !(strings.HasPrefix(match, "'") || strings.HasPrefix(match, "\"")) {
 			re := regexp.MustCompile(`\s+`)
 			matches[i] = re.ReplaceAllString(match, " ")
 		}
+		//matches[i] = strings.TrimPrefix(match, "\\")
 	}
 
 	// Extracting command and possible args
@@ -91,7 +91,7 @@ func formatInput(input string) (string, []string) {
 	if len(matches) > 1 {
 		args = matches[2:] // At index 1 is always the space between the command and the args
 	}
-	// remove the single quotes in the args
+	// remove the leading and closing single and double quotes in the args
 	for i, arg := range args {
 		if strings.HasPrefix(arg, "'") {
 			arg = strings.TrimPrefix(arg, "'")
