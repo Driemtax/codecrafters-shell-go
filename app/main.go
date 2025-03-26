@@ -27,7 +27,8 @@ func main() {
 			os.Exit(1)
 		}
 
-		//input := "echo example     shell'This is a    test'"
+		// The next line is only for debugging
+		//input := "cat '/tmp/bar/f   70'"
 
 		command, args := formatInput(input)
 		// fmt.Println("Command:", command)
@@ -143,6 +144,14 @@ func executeType(commands []string, args []string) {
 // Executes an external Programm, like e.g. git. The Programm has to be in your PATH Variable
 // path: The path to the executable you wish to run
 func executeExternal(command string, args []string) {
+	// TODO: Think about if this needs to be done in every function, then abstract it to formatInput
+	for i, arg := range args {
+		if strings.HasPrefix(arg, "'") {
+			arg = strings.TrimPrefix(arg, "'")
+			args[i] = strings.TrimSuffix(arg, "'")
+			fmt.Print(args[i])
+		}
+	}
 	var cmd *exec.Cmd
 
 	if len(args) < 1 {
