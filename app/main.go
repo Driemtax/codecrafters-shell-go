@@ -91,6 +91,13 @@ func formatInput(input string) (string, []string) {
 	if len(matches) > 1 {
 		args = matches[2:] // At index 1 is always the space between the command and the args
 	}
+	// remove the single quotes in the args
+	for i, arg := range args {
+		if strings.HasPrefix(arg, "'") {
+			arg = strings.TrimPrefix(arg, "'")
+			args[i] = strings.TrimSuffix(arg, "'")
+		}
+	}
 
 	return command, args
 
@@ -117,14 +124,7 @@ func checkCommands(commands []string, arg string) bool {
 // Something still doesnt work right. Whitespace between to single quoted words should be printed if in input
 func executeEcho(args []string) {
 	for _, arg := range args {
-		// Codecrafters wanted no Whitespace between to args in Single Quotes
-		if strings.HasPrefix(arg, "'") {
-			arg = strings.TrimPrefix(arg, "'")
-			arg = strings.TrimSuffix(arg, "'")
-			fmt.Print(arg)
-		} else {
-			fmt.Print(arg)
-		}
+		fmt.Print(arg)
 	}
 	fmt.Print("\n")
 }
@@ -150,13 +150,7 @@ func executeExternal(command string, args []string) {
 			args = append(args[:i], args[i+1:]...)
 		}
 	}
-	// TODO: Think about if this needs to be done in every function, then abstract it to formatInput
-	for i, arg := range args {
-		if strings.HasPrefix(arg, "'") {
-			arg = strings.TrimPrefix(arg, "'")
-			args[i] = strings.TrimSuffix(arg, "'")
-		}
-	}
+
 	var cmd *exec.Cmd
 
 	if len(args) < 1 {
