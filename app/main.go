@@ -75,7 +75,7 @@ func formatInput(input string) (string, []string) {
 	// 2. Everything between ''
 	// 3. Everything that is not a space
 	// 4. Multiple, but at least one, spaces
-	re := regexp.MustCompile(`"[^"]*"|'[^']*'|([^\s'])+|(?:\s)*`) //[^\s]+|\s
+	re := regexp.MustCompile(`"[^"]*"|'[^']*'|([^\s'"])+|(?:\s)*`) //[^\s]+|\s
 	matches := re.FindAllString(input, -1)
 
 	// Replacing all multiple occasions of spaces with a single space
@@ -96,6 +96,9 @@ func formatInput(input string) (string, []string) {
 		if strings.HasPrefix(arg, "'") {
 			arg = strings.TrimPrefix(arg, "'")
 			args[i] = strings.TrimSuffix(arg, "'")
+		} else if strings.HasPrefix(arg, "\"") {
+			arg = strings.TrimPrefix(arg, "\"")
+			args[i] = strings.TrimSuffix(arg, "\"")
 		}
 	}
 
