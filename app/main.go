@@ -96,7 +96,8 @@ func formatInput(input string) (string, []string) {
 	for i, arg := range args {
 		if strings.HasPrefix(arg, "'") {
 			arg = strings.TrimPrefix(arg, "'")
-			args[i] = strings.TrimSuffix(arg, "'")
+			arg = strings.TrimSuffix(arg, "'")
+			args[i] = arg
 		} else if strings.HasPrefix(arg, "\"") {
 			arg = strings.TrimPrefix(arg, "\"")
 			arg = strings.TrimSuffix(arg, "\"")
