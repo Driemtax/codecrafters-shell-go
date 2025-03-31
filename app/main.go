@@ -28,7 +28,7 @@ func main() {
 		}
 
 		// The next line is only for debugging
-		//input := "cat \"/tmp/bar/f\\n47\" \"/tmp/bar/f\\16\" \"/tmp/bar/f'\\'49\""
+		//input := "echo \"hello'script'\\n'world\""
 
 		command, args := formatInput(input)
 
