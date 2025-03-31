@@ -103,6 +103,10 @@ func formatInput(input string) (string, []string) {
 			arg = strings.TrimSuffix(arg, "\"")
 			args[i] = arg
 		}
+		if strings.Contains(arg, "\\") {
+			var index = strings.Index(arg, "\\")
+			arg = arg[:index] + arg[index+1:]
+		}
 		args[i] = strings.TrimPrefix(arg, "\\")
 	}
 
