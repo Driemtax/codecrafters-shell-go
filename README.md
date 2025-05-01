@@ -1,4 +1,4 @@
-This is a starting point for Go solutions to the
+This is an implementation of the
 ["Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview).
 
 In this challenge, you'll build your own POSIX compliant shell that's capable of
@@ -9,10 +9,10 @@ REPLs, builtin commands, and more.
 **Note**: If you're viewing this repo on GitHub, head over to
 [codecrafters.io](https://codecrafters.io) to try the challenge.
 
-🐚 GoShell – A Simple Shell in Go
+# 🐚 GoShell – A Simple Shell in Go
 
 GoShell is a minimalistic, interactive command-line interface (shell) written in Go. It offers basic shell functionalities like echo, cd, pwd, type, and executing external programs. Ideal for learning, experimenting, or as a foundation for your own shell projects!
-✨ Features
+### ✨ Features
 
 - Interactive Input: Commands are entered and executed directly in the shell.
 - Built-in Commands:
@@ -25,7 +25,7 @@ GoShell is a minimalistic, interactive command-line interface (shell) written in
 - Argument Parsing: Supports single quotes, double quotes, and escape characters in the input.
 - Error Messages: Clear outputs for errors or unknown commands.
 
-🚀 Getting Started
+### 🚀 Getting Started
 Prerequisites
 
 - Go (at least version 1.16 recommended)
@@ -38,7 +38,7 @@ cd goshell
 go run main.go
 ```
 
-🛠️ Examples
+### 🛠️ Examples
 
 ```shell
 $ echo "Hello World!"
@@ -60,19 +60,19 @@ ls is /bin/ls
 $ exit
 ```
 
-⚠️ Notes & Tips
+### ⚠️ Notes & Tips
 
 - Whitespace & Quotes: The shell supports single and double quotes, as well as escape characters, but the parsing is not perfect and may be limited for complex inputs.
 - External Programs: Only programs located in the $PATH can be started.
 - Error Handling: Faulty commands or invalid directories are reported informatively.
 
-💡 ToDo / Ideas for Extensions
+### 💡 ToDo / Ideas for Extensions
 
 - Better support for pipes (|) and redirections (>, <)
 - Improved argument parsing logic
 - Support for environment variables
 - Autocompletion and history
 
-📄 License
+### 📄 License
 
 MIT License – feel free to use, modify, and contribute!
