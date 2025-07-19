@@ -6,6 +6,6 @@
 #
 # Learn more: https://codecrafters.io/program-interface
 
-set -e # Exit on failure
+#set -e # Exit on failure
 
-exec /tmp/codecrafters-build-shell-go "$@"
+#exec /tmp/codecrafters-build-shell-go "$@"
