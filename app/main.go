@@ -7,6 +7,8 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/driemtax/Calculator/pkg/calculator"
 )
 
 // Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
@@ -16,7 +18,7 @@ func main() {
 
 	for {
 		// Commands currently bultin
-		commands := []string{"echo", "exit", "type", "pwd", "cd"}
+		commands := []string{"echo", "exit", "type", "pwd", "cd", "calc"}
 
 		fmt.Fprint(os.Stdout, "$ ")
 
@@ -54,6 +56,8 @@ func main() {
 			if err != nil {
 				fmt.Printf("%s: %s: No such file or directory\n", command, args[0])
 			}
+		case command == "calc":
+			executeCalc(args)
 		case isEnvCommand:
 			executeExternal(command, args)
 		default:
@@ -103,10 +107,10 @@ func formatInput(input string) (string, []string) {
 			arg = strings.TrimSuffix(arg, "\"")
 			args[i] = arg
 		}
-		if strings.Contains(arg, "\\") {
-			var index = strings.Index(arg, "\\")
-			arg = arg[:index] + arg[index+1:]
-		}
+		// if strings.Contains(arg, "\\") {
+		// 	var index = strings.Index(arg, "\\")
+		// 	arg = arg[:index] + arg[index+1:]
+		// }
 		args[i] = strings.TrimPrefix(arg, "\\")
 	}
 
@@ -199,4 +203,19 @@ func changeDirectory(path string) error {
 	err := os.Chdir(path)
 
 	return err
+}
+
+func executeCalc(args []string) {
+	if len(args) > 1 {
+		fmt.Println("Error: Too many arguments. Did you forget to put your input in quotes?")
+	}
+
+	result, err := calculator.Evaluate(args[0])
+
+	if err != nil {
+		fmt.Println("Error: Calculator:", err)
+		return
+	}
+
+	fmt.Println("$ Result:", result)
 }
