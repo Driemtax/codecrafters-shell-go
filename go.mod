@@ -10,4 +10,4 @@ module github.com/codecrafters-io/shell-starter-go
 
 go 1.24.0
 
-require github.com/driemtax/Calculator v0.0.0-20250719182440-4dafb6b53edd // indirect
+require github.com/driemtax/Calculator v0.0.0-20250721164638-b6167b9f6805

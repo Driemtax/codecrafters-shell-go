@@ -208,16 +208,88 @@ func changeDirectory(path string) error {
 }
 
 func executeCalc(args []string) {
-	if len(args) > 1 {
-		fmt.Println("Error: Too many arguments. Did you forget to put your input in quotes?")
-	}
-
-	result, err := calculator.Evaluate(args[0])
-
-	if err != nil {
-		fmt.Println("Error: Calculator:", err)
+	if len(args) > 0 {
+		fmt.Println("Error: Too many arguments. Calc doesnt take any arguments.")
 		return
 	}
 
-	fmt.Println("$ Result:", result)
+	fmt.Println("#####################################################################################")
+	fmt.Println("            Welcome to the Calculator. Enter help for an instruction list            ")
+	fmt.Println("#####################################################################################")
+
+	for {
+		fmt.Fprint(os.Stdout, "$ ")
+
+		input, err := bufio.NewReader(os.Stdin).ReadString('\n')
+		input = strings.TrimSpace(input)
+
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error reading input:", err)
+			os.Exit(1)
+		}
+
+		if input == "exit" {
+			break
+		} else if input == "help" {
+			printHelpInCalc()
+		} else {
+			// use module api to evaluate the input
+			result, err := calculator.Evaluate(input)
+
+			if err != nil {
+				fmt.Println("$ Error: Calculator:", err)
+				return
+			}
+
+			fmt.Println("$ Result:", result)
+		}
+
+	}
+
+}
+
+func printHelpInCalc() {
+	fmt.Println()
+	fmt.Println("Calculator Help - Available Commands and Operations")
+	fmt.Println("==================================================")
+	fmt.Println()
+
+	// Arithmetic Operations
+	fmt.Println("ARITHMETIC OPERATIONS:")
+	fmt.Printf("%-15s %-40s %s\n", "Operation", "Description", "Example")
+	fmt.Println(strings.Repeat("-", 70))
+	fmt.Printf("%-15s %-40s %s\n", "+", "Addition", "5 + 3")
+	fmt.Printf("%-15s %-40s %s\n", "-", "Subtraction", "10 - 4")
+	fmt.Printf("%-15s %-40s %s\n", "*", "Multiplication", "6 * 7")
+	fmt.Printf("%-15s %-40s %s\n", "/", "Division", "15 / 3")
+	fmt.Printf("%-15s %-40s %s\n", "()", "Parentheses for grouping", "(2 + 3) * 4")
+	fmt.Println()
+
+	// Mathematical Functions
+	fmt.Println("MATHEMATICAL FUNCTIONS:")
+	fmt.Printf("%-15s %-40s %s\n", "Function", "Description", "Example")
+	fmt.Println(strings.Repeat("-", 70))
+	fmt.Printf("%-15s %-40s %s\n", "sin(x)", "Sine function (radians)", "sin(pi/2)")
+	fmt.Printf("%-15s %-40s %s\n", "cos(x)", "Cosine function (radians)", "cos(0)")
+	fmt.Printf("%-15s %-40s %s\n", "tan(x)", "Tangent function (radians)", "tan(pi/4)")
+	fmt.Println()
+
+	// Constants
+	fmt.Println("CONSTANTS:")
+	fmt.Printf("%-15s %-40s %s\n", "Constant", "Description", "Value")
+	fmt.Println(strings.Repeat("-", 70))
+	fmt.Printf("%-15s %-40s %s\n", "pi", "Pi constant", "3.14159...")
+	fmt.Println()
+
+	// Special Commands
+	fmt.Println("SPECIAL COMMANDS:")
+	fmt.Printf("%-15s %-40s\n", "Command", "Description")
+	fmt.Println(strings.Repeat("-", 55))
+	fmt.Printf("%-15s %-40s\n", "help", "Show this help message")
+	fmt.Printf("%-15s %-40s\n", "exit", "Exit the calculator")
+	fmt.Println()
+
+	fmt.Println("Note: All trigonometric functions expect angles in radians.")
+	fmt.Println("Use 'pi' for the pi constant (must be lowercase).")
+	fmt.Println()
 }
