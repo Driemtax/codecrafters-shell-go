@@ -1,6 +1,4 @@
-[![progress-banner](https://backend.codecrafters.io/progress/shell/7f29a4d1-86fa-4902-a7c6-7830afb723b5)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
-
-This is a starting point for Go solutions to the
+This is an implementation of the
 ["Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview).
 
 In this challenge, you'll build your own POSIX compliant shell that's capable of
@@ -11,24 +9,70 @@ REPLs, builtin commands, and more.
 **Note**: If you're viewing this repo on GitHub, head over to
 [codecrafters.io](https://codecrafters.io) to try the challenge.
 
-# Passing the first stage
+# 🐚 GoShell – A Simple Shell in Go
 
-The entry point for your `shell` implementation is in `app/main.go`. Study and
-uncomment the relevant code, and push your changes to pass the first stage:
+GoShell is a minimalistic, interactive command-line interface (shell) written in Go. It offers basic shell functionalities like echo, cd, pwd, type, and executing external programs. Ideal for learning, experimenting, or as a foundation for your own shell projects!
+### ✨ Features
 
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
+- Interactive Input: Commands are entered and executed directly in the shell.
+- Built-in Commands:
+   - echo: Prints text to the console.
+   - pwd: Shows the current working directory.
+   - cd <dir>: Changes the directory (including support for ~).
+   - type <command>: Shows how a command is interpreted (builtin, external, or not found).
+   - exit: Exits the shell.
+- External Programs: Programs in $PATH can be called as usual (e.g., ls, git, cat...).
+- Argument Parsing: Supports single quotes, double quotes, and escape characters in the input.
+- Error Messages: Clear outputs for errors or unknown commands.
+
+### 🚀 Getting Started
+Prerequisites
+
+- Go (at least version 1.16 recommended)
+
+Installation & Start
+
+```bash
+git clone https://github.com/Driemtax/codecrafters-shell-go.git
+cd goshell
+go run main.go
 ```
 
-Time to move on to the next stage!
+### 🛠️ Examples
 
-# Stage 2 & beyond
+```shell
+$ echo "Hello World!"
+Hello World!
 
-Note: This section is for stages 2 and beyond.
+$ pwd
+/home/user/goshell
 
-1. Ensure you have `go (1.24)` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `app/main.go`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+$ cd ..
+$ pwd
+/home/user
+
+$ type echo
+echo is a shell builtin
+
+$ type ls
+ls is /bin/ls
+
+$ exit
+```
+
+### ⚠️ Notes & Tips
+
+- Whitespace & Quotes: The shell supports single and double quotes, as well as escape characters, but the parsing is not perfect and may be limited for complex inputs.
+- External Programs: Only programs located in the $PATH can be started.
+- Error Handling: Faulty commands or invalid directories are reported informatively.
+
+### 💡 ToDo / Ideas for Extensions
+
+- Better support for pipes (|) and redirections (>, <)
+- Improved argument parsing logic
+- Support for environment variables
+- Autocompletion and history
+
+### 📄 License
+
+MIT License – feel free to use, modify, and contribute!
