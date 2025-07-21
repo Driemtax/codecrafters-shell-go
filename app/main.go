@@ -12,6 +12,8 @@ import (
 // Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
 var _ = fmt.Fprint
 
+// This is a test to ensure everything works again
+
 func main() {
 
 	for {
