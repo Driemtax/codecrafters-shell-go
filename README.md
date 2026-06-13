@@ -1,78 +1,74 @@
-This is an implementation of the
-["Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview).
+# Go Custom Shell
 
-In this challenge, you'll build your own POSIX compliant shell that's capable of
-interpreting shell commands, running external programs and builtin commands like
-cd, pwd, echo and more. Along the way, you'll learn about shell command parsing,
-REPLs, builtin commands, and more.
+*This project is a custom shell implementation written in Go, originally created as part of the [CodeCrafters "Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview).*
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+## Overview
 
-# 🐚 GoShell – A Simple Shell in Go
+This application is a lightweight, interactive command-line interface (CLI) shell. It parses user input, handles complex argument formatting (including single quotes, double quotes, and escape characters), and executes both built-in commands and external system programs. You can find the source code for the integrated calculator here: [Calculator](https://github.com/Driemtax/Calculator). It uses recursive-descent parsing to handle operator precedences. 
 
-GoShell is a minimalistic, interactive command-line interface (shell) written in Go. It offers basic shell functionalities like echo, cd, pwd, type, and executing external programs. Ideal for learning, experimenting, or as a foundation for your own shell projects!
-### ✨ Features
+### Core Features
+*   **Custom Input Parsing:** Accurately interprets spaces, single quotes (`'`), double quotes (`"`), and backslash escapes (`\`) to group arguments properly.
+*   **Built-in Commands:** Essential shell utilities implemented natively within the Go application.
+*   **External Command Execution:** Seamlessly finds and runs executables located in your system's `PATH` (e.g., `git`, `ls`, `cat`).
+*   **External Package Integration:** Demonstrates how to embed external Go modules as native shell applications (see the `calc` command).
 
-- Interactive Input: Commands are entered and executed directly in the shell.
-- Built-in Commands:
-   - echo: Prints text to the console.
-   - pwd: Shows the current working directory.
-   - cd <dir>: Changes the directory (including support for ~).
-   - type <command>: Shows how a command is interpreted (builtin, external, or not found).
-   - exit: Exits the shell.
-- External Programs: Programs in $PATH can be called as usual (e.g., ls, git, cat...).
-- Argument Parsing: Supports single quotes, double quotes, and escape characters in the input.
-- Error Messages: Clear outputs for errors or unknown commands.
+---
 
-### 🚀 Getting Started
-Prerequisites
+## Command Overview
 
-- Go (at least version 1.16 recommended)
+| Command | Description |
+| :--- | :--- |
+| `echo` | Prints the provided arguments to the standard output. |
+| `exit` | Gracefully exits the shell. |
+| `type` | Identifies whether a command is a shell builtin or an external executable. |
+| `pwd` | Prints the absolute path of the current working directory. |
+| `cd` | Changes the current working directory. |
+| `calc` | Launches an interactive, built-in scientific calculator. |
+| *(External)* | Any valid executable found in the system `PATH` will be executed. |
 
-Installation & Start
+---
 
-```bash
-git clone https://github.com/Driemtax/codecrafters-shell-go.git
-cd goshell
-go run main.go
+## Command Documentation
+
+### `echo [args...]`
+Prints the given arguments to the console, separated by spaces, followed by a newline. It respects string literals wrapped in single or double quotes, allowing you to echo strings with multiple consecutive spaces or special characters.
+
+### `exit`
+Terminates the shell session and returns a status code of `0` to the operating system.
+
+### `type [command]`
+Inspects the given command string and reports how the shell will interpret it. 
+*   If it is a builtin (like `cd` or `pwd`), it outputs: `[command] is a shell builtin`.
+*   If it is an external program found in the system's `PATH`, it outputs the absolute path to the executable: `[command] is /path/to/executable`.
+*   If it cannot be found, it reports: `[command]: not found`.
+
+### `pwd`
+Outputs the absolute path of the current working directory to the console.
+
+### `cd [path]`
+Changes the shell's current working directory to the specified `path`. 
+*   Supports absolute paths (e.g., `/usr/bin`).
+*   Supports relative paths (e.g., `./dir` or `../`).
+*   Supports the tilde character (`~`) to navigate directly to the current user's home directory.
+*   If the directory does not exist, it will print an error: `cd: [path]: No such file or directory`.
+
+### `calc`
+Enters an interactive calculator sub-shell. This mode allows you to evaluate mathematical expressions in real-time. Type `help` while inside the calculator for a full list of operations, or `exit` to return to the main shell.
+**Supported Operations:**
+*   Arithmetic: `+`, `-`, `*`, `/`, and parentheses `()` for grouping.
+*   Trigonometry: `sin(x)`, `cos(x)`, `tan(x)` (expects angles in radians).
+*   Constants: `pi`.
+
+---
+
+## External Package Integration (Example: Calculator)
+
+A key feature of this shell is its modularity and ability to integrate external Go packages to power built-in commands. 
+
+The `calc` command is powered by an external module. Instead of writing the math evaluation logic directly inside the shell's source code, the shell imports a dedicated evaluation engine:
+
+```go
+import "github.com/driemtax/Calculator/pkg/calculator"
 ```
 
-### 🛠️ Examples
-
-```shell
-$ echo "Hello World!"
-Hello World!
-
-$ pwd
-/home/user/goshell
-
-$ cd ..
-$ pwd
-/home/user
-
-$ type echo
-echo is a shell builtin
-
-$ type ls
-ls is /bin/ls
-
-$ exit
-```
-
-### ⚠️ Notes & Tips
-
-- Whitespace & Quotes: The shell supports single and double quotes, as well as escape characters, but the parsing is not perfect and may be limited for complex inputs.
-- External Programs: Only programs located in the $PATH can be started.
-- Error Handling: Faulty commands or invalid directories are reported informatively.
-
-### 💡 ToDo / Ideas for Extensions
-
-- Better support for pipes (|) and redirections (>, <)
-- Improved argument parsing logic
-- Support for environment variables
-- Autocompletion and history
-
-### 📄 License
-
-MIT License – feel free to use, modify, and contribute!
+This demonstrates how you can easily expand the shell's capabilities by pulling in specialized repositories.
